@@ -28,26 +28,26 @@ peer.on('open', function(id) {
 });
 
 $(function() {
-  navigator.getUserMedia({
-    audio: true,
-    video: true
-  }, function(stream) {
-    // show preview of user
-    $('#user').attr({src: window.URL.createObjectURL(stream)});
-  }, function(err) {
-    console.error(err);
-  });
-  
   $('#call-btn').on('click', function() {
     // make a call w/ provided id
-    var id = $('call-id').val();
-  
-    console.log('calling', id);
-  
-    var call = peer.call('fuckin ids', stream);
+    var id = $('#call-id').val();
     
-    call.on('stream', function(remoteStream) {
-      $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
+    navigator.getUserMedia({
+      audio: true,
+      video: true
+    }, function(stream) {
+      // show preview of user
+      $('#user').attr({src: window.URL.createObjectURL(stream)});
+      
+      console.log('calling', id);
+    
+      var call = peer.call('fuckin ids', stream);
+      
+      call.on('stream', function(remoteStream) {
+        $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
+      });
+    }, function(err) {
+      console.error(err);
     });
   });
 });
