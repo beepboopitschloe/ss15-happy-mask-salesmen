@@ -56,7 +56,7 @@ peer.on('open', function(id) {
 });
 
 $(function() {
-  var client = {isHost: true, connections:[]};
+  window.client = {isHost: true, connections:[]};
   navigator.getUserMedia({
     audio: true,
     video: true
@@ -65,7 +65,7 @@ $(function() {
     $('#user').attr({src: window.URL.createObjectURL(stream)});
     
     peer.on('call', function(call) {
-      if (client.isHost) {
+      if (window.client.isHost) {
         console.log('receiving call', call);
         call.answer(stream);
 
@@ -78,16 +78,16 @@ $(function() {
           $('body').append(feed);
           
           var newConnection = {id: call.peer, remoteStream: remoteStream};
-          client.connections[client.connections.length] = newConnection;
+          window.client.connections[window.client.connections.length] = newConnection;
           
           var ithConnection;
-          for (var i=0; i<client.connections.length; i++) {
+          for (var i=0; i<window.client.connections.length; i++) {
             var dataConnection;
-            ithConnection = client.connections[i];
+            ithConnection = window.client.connections[i];
             dataConnection = peer.connect(ithConnection.id);
             dataConnection.on('open', function() {
               console.log('connection with '+ithConnection.id+' established! Sending update data.');
-              dataConnection.send(client.connections);
+              dataConnection.send(window.client.connections);
             });
           }
         });
@@ -100,7 +100,7 @@ $(function() {
       console.log('received connection!', dataConnection);
       dataConnection.on('data', function(data) {
         console.log('received data from connection.', data);
-        client.connections = data;
+        window.client.connections = data;
         dataConnection.close();
       });
     });
@@ -109,7 +109,7 @@ $(function() {
       // make a call w/ provided id
       var id = $('#call-id').val();
       
-      client.isHost = false;
+      window.client.isHost = false;
       
       console.log('calling', id);
     
