@@ -43,7 +43,10 @@ $(function() {
       call.answer(stream);
       
       call.on('stream', function(remoteStream) {
-        $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
+        var feed = $(document.createElement('video')).attr({
+          autoplay: true,
+          src: window.URL.createObjectURL(remoteStream)
+        });
       });
     });
   
