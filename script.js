@@ -32,11 +32,11 @@ $(function() {
       audio: true,
       video: true
     }, function(stream) {
-    peer.on('call', function(remoteStream) {
-      call.answer(stream);
-      
-      $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
-    });
+      peer.on('call', function(remoteStream) {
+        call.answer(stream);
+        
+        $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
+      });
     
     $('#call-btn').on('click', function() {
       // make a call w/ provided id
@@ -52,8 +52,6 @@ $(function() {
       call.on('stream', function(remoteStream) {
         $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
       });
-    }, function(err) {
-      console.error(err);
     });
   }, function(err) {
     throw err;
