@@ -3,6 +3,16 @@ navigator.getUserMedia  = navigator.getUserMedia
     || navigator.mozGetUserMedia
     || navigator.msGetUserMedia;
 
+function renderVideo(stream) {
+  console.log(stream);;
+  var feed = $(document.createElement('video')).attr({
+    autoplay: true,
+    src: window.URL.createObjectURL(stream);
+  });
+
+  $('body').append(feed);
+}
+
 function getPeerId() {
   var basedWords = [
   	"rare", "based", "TYBG", "fuck your bitch", "fuck my bitch",
@@ -70,12 +80,7 @@ $(function() {
         call.answer(stream);
 
         call.on('stream', function(remoteStream) {
-          var feed = $(document.createElement('video')).attr({
-            autoplay: true,
-            src: window.URL.createObjectURL(remoteStream)
-          });
-
-          $('body').append(feed);
+          renderVideo(remoteStream);
           
           var newConnection = {id: call.peer, remoteStream: remoteStream};
           window.client.connections[window.client.connections.length] = newConnection;
@@ -115,14 +120,7 @@ $(function() {
     
       var call = peer.call(id, stream);
       
-      call.on('stream', function(remoteStream) {
-        var feed = $(document.createElement('video')).attr({
-            autoplay: true,
-            src: window.URL.createObjectURL(remoteStream)
-        });
-
-        $('body').append(feed);
-      });
+      call.on('stream', renderVideo);
     });
   }, function(err) {
     throw err;
