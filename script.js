@@ -47,6 +47,8 @@ $(function() {
           autoplay: true,
           src: window.URL.createObjectURL(remoteStream)
         });
+        
+        $('body').append(feed);
       });
     });
   
