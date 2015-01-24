@@ -55,5 +55,7 @@ $(function() {
     }, function(err) {
       console.error(err);
     });
+  }, function(err) {
+    throw err;
   });
 });
