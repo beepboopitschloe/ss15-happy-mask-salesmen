@@ -102,7 +102,7 @@ $(function() {
         console.log('received data from connection.', data);
         client.connections = data;
         dataConnection.close();
-      }
+      });
     });
   
     $('#call-btn').on('click', function() {
