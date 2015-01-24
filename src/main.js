@@ -77,7 +77,7 @@ $(function() {
 
           $('body').append(feed);
           
-          var newConnection = {id: id, remoteStream: remoteStream};
+          var newConnection = {id: call.peer, remoteStream: remoteStream};
           client.connections[client.connections.length] = newConnection;
           
           var ithConnection;
