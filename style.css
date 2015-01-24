@@ -1,0 +1,11 @@
+.greyscale {
+  +filter: greyscale(1);
+}
+
+.sepia {
+  +filter: sepia(1);
+}
+
+.blur {
+  +filter: blur(3px);
+}
