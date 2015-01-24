@@ -7,7 +7,7 @@ function renderVideo(stream) {
   console.log(stream);;
   var feed = $(document.createElement('video')).attr({
     autoplay: true,
-    src: window.URL.createObjectURL(stream);
+    src: window.URL.createObjectURL(stream)
   });
 
   $('body').append(feed);
@@ -89,10 +89,11 @@ $(function() {
           for (var i=0; i<window.client.connections.length; i++) {
             var dataConnection;
             ithConnection = window.client.connections[i];
-            dataConnection = peer.connect(ithConnection.id);
+            dataConnection = peer.connect(ithConnection.id, {serialization: "json"});
             dataConnection.on('open', function() {
               console.log('connection with '+ithConnection.id+' established! Sending update data.');
               dataConnection.send(window.client.connections);
+              console.log('sent connections update');
             });
           }
         });
