@@ -4,7 +4,7 @@ navigator.getUserMedia  = navigator.getUserMedia
     || navigator.msGetUserMedia;
 
 function renderVideo(stream) {
-  console.log(stream);;
+  console.log(stream);
   var feed = $(document.createElement('video')).attr({
     autoplay: true,
     src: window.URL.createObjectURL(stream)
@@ -98,6 +98,9 @@ $(function() {
             dataConnection.on('error', function(err) {
               console.log(err);
             });
+            dataConnection.on('close', function() {
+              console.log('closing data connection');
+            });
           }
         });
         call.on('error', function(err) {
@@ -116,7 +119,12 @@ $(function() {
       dataConnection.on('data', function(data) {
         console.log('received data from connection.', data);
         window.client.connections = data;
+        console.log('got the following data update:');
+        console.log(data);
         dataConnection.close();
+      });
+      dataConnection.on('close', function() {
+        console.log('closing data connection');
       });
     });
   
