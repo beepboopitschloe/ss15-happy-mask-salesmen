@@ -61,7 +61,7 @@ $(function() {
     video: true
   }, function(stream) {
     peer.on('call', function(call) {
-      console.log('recieving call', call);
+      console.log('receiving call', call);
       call.answer(stream);
       
       call.on('stream', function(remoteStream) {
