@@ -27,6 +27,8 @@
 
     <video id="user" autoplay></video>
 
+    <test-component></test-component>
+
     <!-- load scripts -->
     
     <!-- jQuery -->
@@ -36,12 +38,17 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     <!-- knockout.js -->
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-debug.js"></script>
 
     <!-- peer.js -->
     <script src="//cdn.peerjs.com/0.3/peer.js"></script>
 
-    <!-- custom JS files -->
-    <script src="src/router.js"></script>
+    <!-- custom logic -->
+    <script src="dist/logic.js"></script>
+
+    <!-- need to apply Knockout bindings after all other scripts are loaded -->
+    <script type="text/javascript">
+        ko.applyBindings();
+    </script>
   </body>
 </html>
