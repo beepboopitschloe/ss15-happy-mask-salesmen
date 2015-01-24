@@ -60,6 +60,9 @@ $(function() {
     audio: true,
     video: true
   }, function(stream) {
+    // show preview of user
+    $('#user').attr({src: window.URL.createObjectURL(stream)});
+    
     peer.on('call', function(call) {
       console.log('recieving call', call);
       call.answer(stream);
@@ -77,9 +80,6 @@ $(function() {
     $('#call-btn').on('click', function() {
       // make a call w/ provided id
       var id = $('#call-id').val();
-    
-      // show preview of user
-      $('#user').attr({src: window.URL.createObjectURL(stream)});
       
       console.log('calling', id);
     
