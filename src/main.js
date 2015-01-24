@@ -95,11 +95,20 @@ $(function() {
               dataConnection.send(window.client.connections);
               console.log('sent connections update');
             });
+            dataConnection.on('error', function(err) {
+              console.log(err);
+            });
           }
+        });
+        call.on('error', function(err) {
+          console.log(err);
         });
       } else {
         console.log('received ignored call from', call);
       }
+    });
+    peer.on('error', function(err) {
+      console.log(err);
     });
     
     peer.on('connection', function(dataConnection) {
@@ -122,6 +131,9 @@ $(function() {
       var call = peer.call(id, stream);
       
       call.on('stream', renderVideo);
+      call.on('error', function(err) {
+        console.log(err);
+      });
     });
   }, function(err) {
     throw err;
