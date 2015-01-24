@@ -56,6 +56,7 @@ peer.on('open', function(id) {
 });
 
 $(function() {
+  var client = {isHost: true, connections:[]};
   navigator.getUserMedia({
     audio: true,
     video: true
@@ -64,22 +65,51 @@ $(function() {
     $('#user').attr({src: window.URL.createObjectURL(stream)});
     
     peer.on('call', function(call) {
-      console.log('receiving call', call);
-      call.answer(stream);
-      
-      call.on('stream', function(remoteStream) {
-        var feed = $(document.createElement('video')).attr({
-          autoplay: true,
-          src: window.URL.createObjectURL(remoteStream)
+      if (client.isHost) {
+        console.log('receiving call', call);
+        call.answer(stream);
+
+        call.on('stream', function(remoteStream) {
+          var feed = $(document.createElement('video')).attr({
+            autoplay: true,
+            src: window.URL.createObjectURL(remoteStream)
+          });
+
+          $('body').append(feed);
+          
+          var newConnection = {id: id, remoteStream: remoteStream};
+          client.connections[client.connections.length] = newConnection;
+          
+          var ithConnection;
+          for (var i=0; i<client.connections.length; i++) {
+            var dataConnection;
+            ithConnection = client.connections[i];
+            dataConnection = peer.connect(ithConnection.id);
+            dataConnection.on('open', function() {
+              console.log('connection with '+ithConnection.id+' established! Sending update data.');
+              dataConnection.send(client.connections);
+            });
+          }
         });
-        
-        $('body').append(feed);
-      });
+      } else {
+        console.log('received ignored call from', call);
+      }
+    });
+    
+    peer.on('connection', function(dataConnection) {
+      console.log('received connection!', dataConnection);\
+      dataConnection.on('data', function(data) {
+        console.log('received data from connection.', data);
+        client.connections = data;
+        dataConnection.close();
+      }
     });
   
     $('#call-btn').on('click', function() {
       // make a call w/ provided id
       var id = $('#call-id').val();
+      
+      client.isHost = false;
       
       console.log('calling', id);
     
