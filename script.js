@@ -28,14 +28,20 @@ peer.on('open', function(id) {
 });
 
 $(function() {
-  $('#call-btn').on('click', function() {
-    // make a call w/ provided id
-    var id = $('#call-id').val();
-    
     navigator.getUserMedia({
       audio: true,
       video: true
     }, function(stream) {
+    peer.on('call', function(remoteStream) {
+      call.answer(stream);
+      
+      $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
+    });
+    
+    $('#call-btn').on('click', function() {
+      // make a call w/ provided id
+      var id = $('#call-id').val();
+    
       // show preview of user
       $('#user').attr({src: window.URL.createObjectURL(stream)});
       
