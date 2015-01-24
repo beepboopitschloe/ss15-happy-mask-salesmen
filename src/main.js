@@ -97,7 +97,7 @@ $(function() {
     });
     
     peer.on('connection', function(dataConnection) {
-      console.log('received connection!', dataConnection);\
+      console.log('received connection!', dataConnection);
       dataConnection.on('data', function(data) {
         console.log('received data from connection.', data);
         client.connections = data;
