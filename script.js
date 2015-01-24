@@ -3,6 +3,12 @@ navigator.getUserMedia  = navigator.getUserMedia
     || navigator.mozGetUserMedia
     || navigator.msGetUserMedia;
 
+function getPeerId() {
+  var words = [
+    'correct', 'horse', 'battery', 'staple', 'based', 'god',
+  ]
+}
+
 function audioAPI() {
   var context = new AudioContext();
 
@@ -50,7 +56,7 @@ $(function() {
       
       console.log('calling', id);
     
-      var call = peer.call('fuckin ids', stream);
+      var call = peer.call(id, stream);
       
       call.on('stream', function(remoteStream) {
         $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
