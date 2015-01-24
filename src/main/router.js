@@ -6,16 +6,31 @@
 
 (function() {
 
+  function renderView(componentName, href) {
+    // render the template
+    var container = $('#view-container'),
+      component = document.createElement(componentName);
+
+    container.empty().append(component);
+
+    // instantiate the component
+    ko.applyBindingsToNode(component);
+
+    // if the navbar has a link to this page, mark it as active
+    $('.navbar li.active').removeClass('active');
+    $('.navbar li a[href="#' + href + '"]').parent().addClass('active');
+  }
+  
   var routes = {
     '': {
       enter: function() {
-        // invoke create-room component 
+        renderView('view-base', '');
       }
     },
 
     'join': {
       enter: function(roomId) {
-        // invoke room-view component
+        renderView('view-join', 'join');
       }
     }
   };
@@ -35,8 +50,6 @@
       route = routes[components[0] || ''];
 
     if (route) {
-      console.log('entering route', components[0]);
-
       // invoke the route.enter() function with the rest of the components
       // as arguments
       return route.enter.apply(route, components.slice(1));
