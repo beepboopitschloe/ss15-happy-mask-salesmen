@@ -11,7 +11,7 @@
       url: 'templates/views/join.html'
     },
     viewModel: function(params) {
-      console.log('instantiated join view.');
+      
     }
   });
 
