@@ -47,12 +47,26 @@ function audioAPI() {
   });
 }
 
-var peer = new Peer(getPeerId(), {
-  key: 'l10zoxgcc0s8m2t9'
-});
+var peer;
 
-peer.on('open', function(id) {
-  console.log('peer ID:', id);
+// This callback function will give us the iceServers:
+window.turnserversDotComAPI.iceServers(function(data) {
+
+  console.log('data;', data);
+
+  peer = new Peer(getPeerId(), {
+    key: 'tnh8oxc0ghqia4i',
+    
+    config: {
+      iceServers: data
+    }
+  });
+  
+  peer.on('open', function(id) {
+    console.log('peer ID:', id);
+  });
+
+  
 });
 
 $(function() {
