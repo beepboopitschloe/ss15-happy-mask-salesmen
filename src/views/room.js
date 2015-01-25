@@ -100,7 +100,13 @@ function getPeerId() {
   return words;
 }
 
-function makeCall(peer, id, stream) {
+function makeCall(peer, id, stream, options) {
+  options = options || {};
+  
+  var errorHandler = options.onError || function(err) {
+    console.log('error making call:', err);
+  };
+  
   console.log('calling', id);
   var mediaConnection = peer.call(id, stream, {
     metadata: {
@@ -113,7 +119,7 @@ function makeCall(peer, id, stream) {
       name: id
     });
   });
-  mediaConnection.on('error', function(err) { console.log('err:', err); });
+  mediaConnection.on('error', errorHandler);
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
 }
 
@@ -177,8 +183,14 @@ function getCallAsClient(call, stream) {
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
 
-function createPeer(stream, id) {
+function createPeer(stream, id, options) {
   id = id || getPeerId();
+  
+  options = options || {};
+  
+  var errorHandler = options.onError || function(err) {
+    console.error(err);
+  };
   
   var peer = new Peer(id, {
     key: 'l10zoxgcc0s8m2t9'
@@ -197,9 +209,7 @@ function createPeer(stream, id) {
     }
   });
   
-  peer.on('error', function(err) {
-    console.error(err);
-  });
+  peer.on('error', errorHandler);
 
   // only clients will ever be on the receiving end of data connections
   peer.on('connection', function(dataConnection) {
@@ -257,7 +267,14 @@ function createPeer(stream, id) {
           peer = createPeer(stream, hostId);
         } else {
           // make a connection to the host
-          peer = createPeer(stream);
+          peer = createPeer(stream, null, {
+            onError: function(err) {
+              // no room to connect to
+              toastr.error('Could not find a room with id ' + hostId);
+              
+              window.location.href = '#';
+            }
+          });
           
           makeCall(peer, hostId, stream);
         }
