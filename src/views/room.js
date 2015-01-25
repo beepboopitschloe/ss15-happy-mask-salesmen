@@ -114,7 +114,7 @@ function makeCall(peer, id, stream) {
     });
   });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
-  mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
+  mediaConnection.on('close', function() { $('span.user-id:contains('+id+')').closest('chatter-widget').remove(); });
 }
 
 function getCall(peer, call, stream) {
@@ -137,7 +137,7 @@ function getCall(peer, call, stream) {
     setUpNewDataConnection(peer, call.peer);
   });
   call.on('error', function(err) {console.log('err:', err); });
-  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+  call.on('close', function() { $('span.user-id:contains('+call.peer+')').closest('chatter-widget').remove(); });
 }
 
 function tellToMakeCall(dataConnection, id) {
@@ -174,7 +174,7 @@ function getCallAsClient(call, stream) {
     createCallerWidget(remoteStream, call.metadata);
   });
   call.on('error', function(err) {console.log('err:', err); });
-  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+  call.on('close', function() { $('span.user-id:contains('+call.peer+')').closest('chatter-widget').remove(); });
 }
 
 function createPeer(stream, id) {
