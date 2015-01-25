@@ -6,6 +6,13 @@ no-frills voice chat-- just create a room and invite some friends, no account
 necessary. Best used when gaming together and Skype or Ventrilo is too much of
 a hassle, or when you need quick and easy access to an audio conversation.
 
+Authors
+-------
+
+[Noah Muth](http://github.com/nmuth)
+[Rob Sigler](http://github.com/flossoraptor)
+[Jane Kagan](http://github.com/janekagan)
+
 Tools Used
 ----------
 The app is based on using WebRTC to connect browser-to-browser. The primary
