@@ -20,6 +20,12 @@ function renderVideo(stream) {
   $('body').append(feed);
 }
 
+function renderAudio(stream) {
+  var audio = $('<audio autoplay />').appendTo('body');
+
+  audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
+}
+
 function getPeerId() {
   var basedWords = [
     "rare", "based", "TYBG", "fuck your bitch", "fuck my bitch",
@@ -52,7 +58,7 @@ function makeCall(peer, id, stream) {
   console.log('calling', id);
   var mediaConnection = peer.call(id, stream);
   
-  mediaConnection.on('stream', renderVideo);
+  mediaConnection.on('stream', renderAudio);
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
 }
@@ -61,7 +67,7 @@ function getCall(peer, call, stream) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
-    renderVideo(remoteStream);
+    renderAudio(remoteStream);
     
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
@@ -110,7 +116,7 @@ function setUpNewDataConnection(peer, id) {
 function getCallAsClient(call, stream) {
   call.answer(stream);
   
-  call.on('stream', renderVideo);
+  call.on('stream', renderAudio);
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
@@ -178,7 +184,7 @@ function createPeer() {
       // get stream
       navigator.getUserMedia({
         audio: true,
-        video: true
+        video: false
       }, function(stream) {
         makeCall(peer, hostId, stream);
       }, function(error) {
