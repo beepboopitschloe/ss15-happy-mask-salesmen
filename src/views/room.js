@@ -26,12 +26,14 @@ function renderAudio(stream) {
   audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
 }
 
-function createCallerWidget(stream, metadata) {
+function createCallerWidget(peerId, stream, metadata) {
   var widget = document.createElement('chatter-widget');
   
   metadata = metadata || {};
   
-  $(widget).attr({
+  $(widget)
+  .attr({
+    id: peerId + '-widget',
     params: JSON.stringify({
       name: metadata.name || 'anonymous',
       info: metadata.info || ''
@@ -45,6 +47,11 @@ function createCallerWidget(stream, metadata) {
   setTimeout(function() {
     $(widget).find('audio')[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
   }, 1000);
+}
+
+function updateWidgetWithName(peerId, name) {
+  console.log('updating widget', peerId, 'with name', name);
+  $('#' + peerId + '-widget').find('.user-id').text(name);
 }
 
 function getPeerId() {
@@ -94,10 +101,10 @@ function getPeerId() {
   ];
   
   var words = basedWords[Math.floor(Math.random() * basedWords.length)]
-    + ' ' + basedWords[Math.floor(Math.random() * basedWords.length)]
-    + ' ' + basedWords[Math.floor(Math.random() * basedWords.length)];
+    + '-' + basedWords[Math.floor(Math.random() * basedWords.length)]
+    + '-' + basedWords[Math.floor(Math.random() * basedWords.length)];
   
-  return words;
+  return words.replace(/\s/g, '-').toLowerCase();
 }
 
 function makeCall(peer, id, stream, options) {
@@ -113,49 +120,56 @@ function makeCall(peer, id, stream, options) {
   });
   
   mediaConnection.on('stream', function(remoteStream) {
-
-    peer.on('connection', function(dataConnection) {
-      console.log('recieved data connection', dataConnection);
-      
-      dataConnection.on('open', function() {
-        console.log('dataConnection opened');
-      });
-      
-      dataConnection.on('data', function(data) {
-        if (data.type === 'newClient') {
-          console.log('the host told me to call', data.id);
-          
-          makeCall(peer, data.id, stream, {
-            metadata: {
-              name: options.name
-            }
-          });
-        } else if (data.type === 'metadata') {
-          createCallerWidget(remoteStream, data);
-          if (data.closeMe) {
-            dataConnection.close();
-          }
-        }
-      });
-      
-      dataConnection.on('close', function() {
-        console.log('dataConnection closed! I\'m a client');
-      });
-      
-      dataConnection.on('error', function(err) {
-        console.error('dataConnection error:', err);
-      });
+    createCallerWidget(mediaConnection.peer, remoteStream, {
+      name: 'waiting for name'
     });
   });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { $('span.user-id:contains('+id+')').closest('chatter-widget').remove(); });
+  
+  peer.on('connection', function(dataConnection) {
+    console.log('recieved data connection', dataConnection);
+    
+    dataConnection.on('open', function() {
+      console.log('dataConnection opened');
+    });
+    
+    dataConnection.on('data', function(data) {
+      if (data.type === 'newClient') {
+        console.log('the host told me to call', data.id);
+        
+        makeCall(peer, data.id, stream, {
+          metadata: {
+            name: options.name
+          }
+        });
+      } else if (data.type === 'metadata') {
+        console.log('got metadata', data);
+        
+        // @TODO update the name on the appropriate widget
+        updateWidgetWithName(dataConnection.peer, data.name);
+        
+        if (data.closeMe) {
+          dataConnection.close();
+        }
+      }
+    });
+    
+    dataConnection.on('close', function() {
+      console.log('dataConnection closed! I\'m a client');
+    });
+    
+    dataConnection.on('error', function(err) {
+      console.error('dataConnection error:', err);
+    });
+  });
 }
 
 function getCall(peer, call, stream, options) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream, call.metadata);
+    createCallerWidget(call.peer, remoteStream, call.metadata);
     
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
@@ -246,7 +260,7 @@ function getCallAsClient(peer, call, stream, options) {
   setUpClientToClientDataConnection(peer, call.peer, options);
   
   call.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream, call.metadata);
+    createCallerWidget(call.peer, remoteStream, call.metadata);
   });
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { $('span.user-id:contains('+call.peer+')').closest('chatter-widget').remove(); });
