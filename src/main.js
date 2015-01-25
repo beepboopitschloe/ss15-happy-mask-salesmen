@@ -79,11 +79,15 @@ function getCall(call, stream) {
   
   call.on('stream', function(remoteStream) {
     renderVideo(remoteStream);
+    
     var newConnection = {id: call.peer, remoteStream: remoteStream};
+    
+    console.log('Passing along dataConnection to clients...');
     
     for (var i=0; i<window.client.dataConnections.length; i++) {
       console.log('i: ' + i + ', ' + call.peer);
-      tellToMakeCall(window.client.DataConnections[i], id);
+      
+      tellToMakeCall(window.client.dataConnections[i].con, call.peer);
     }
     
     window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
@@ -95,19 +99,27 @@ function getCall(call, stream) {
 
 function tellToMakeCall(dataConnection, id) {
   console.log('telling client to call new client via dataconnection');
+  
   dataConnection.send({id: id});
 }
 
 function setUpNewDataConnection(id) {
   var dataConnection = peer.connect(id, {serialization: 'json'});
+  
+  console.log('Making data connection to', id);
+  
   dataConnection.on('open', function() {
+    console.log('Data connection to', id, 'opened');
+    
     var dataConnectionWrapper = {con: dataConnection, id: id};
-    window.client.dataConnections[window.client.dataConnections] = dataConnectionWrapper;
+    window.client.dataConnections[window.client.dataConnections.length] = dataConnectionWrapper;
   });
+  
   dataConnection.on('close', function() {
-    console.log('dataConnection closed! I\m the host');
+    console.log('dataConnection closed! I\'m the host');
     // TODO: remove dataConnectionWrapper from dataConnections array
   });
+  
   dataConnection.on('error', function(err) { console.log('err:', err); });
   return dataConnection;
 }
@@ -138,27 +150,36 @@ $(function() {
         getCallAsClient(call, stream);
       }
     });
+    
     peer.on('error', function(err) {
-      console.log(err);
+      console.error(err);
     });
     
     // only clients will ever be on the receiving end of data connections
     peer.on('connection', function(dataConnection) {
+      console.log('recieved data connection', dataConnection);
+      
       dataConnection.on('open', function() {
-        // ??? idk
+        console.log('dataConnection opened');
       });
+      
       dataConnection.on('data', function(data) {
         console.log('the host told me to call', data.id);
+        
         makeCall(data.id, stream);
       });
+      
       dataConnection.on('close', function() {
-        console.log('dataConnection closed! I\m a client');
+        console.log('dataConnection closed! I\'m a client');
       });
-      dataConnection.on('error', function(err) { console.log('err:', err); });
+      
+      dataConnection.on('error', function(err) {
+        console.error('dataConnection error:', err);
+      });
     });
   
     $('#call-btn').on('click', function() {
-      var id = $('#call-id').val(); 
+      var id = $('#call-id').val();
       window.client.isHost = false;
       
       makeCall(id, stream);
