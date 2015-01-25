@@ -6,12 +6,17 @@
 
 (function() {
 
-  function renderView(componentName, href) {
+  function renderView(componentName, href, params) {
     // render the template
     var container = $('#view-container'),
       component = document.createElement(componentName);
 
+    // put the component into the page
     container.empty().append(component);
+
+    $(component).attr({
+      params: JSON.stringify(params)
+    });
 
     // instantiate the component
     ko.applyBindingsToNode(component);
@@ -30,7 +35,9 @@
 
     'room': {
       enter: function(roomId) {
-        renderView('view-room', 'room');
+        renderView('view-room', 'room', {
+          hostId: roomId
+        });
       }
     }
   };
