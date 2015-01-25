@@ -143,6 +143,15 @@ button {
 	padding: 0px;
 }
 
+#chat-name {
+	font-weight: bold;
+}
+
+#header-div {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 /* loader element from http://projects.lukehaas.me/css-loaders/ */
 .loader {
   font-size: 90px;
