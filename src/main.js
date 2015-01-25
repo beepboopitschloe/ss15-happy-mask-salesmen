@@ -3,6 +3,16 @@ navigator.getUserMedia  = navigator.getUserMedia
     || navigator.mozGetUserMedia
     || navigator.msGetUserMedia;
 
+function renderVideo(stream) {
+  console.log(stream);
+  var feed = $(document.createElement('video')).attr({
+    autoplay: true,
+    src: window.URL.createObjectURL(stream)
+  });
+
+  $('body').append(feed);
+}
+
 function getPeerId() {
   var basedWords = [
   	"rare", "based", "TYBG", "fuck your bitch", "fuck my bitch",
@@ -55,7 +65,76 @@ peer.on('open', function(id) {
   console.log('peer ID:', id);
 });
 
+function makeCall(id, stream) {
+  console.log('calling', id);
+  var mediaConnection = peer.call(id, stream);
+  
+  mediaConnection.on('stream', renderVideo);
+  mediaConnection.on('error', function(err) { console.log('err:', err); });
+  mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
+}
+
+function getCall(call, stream) {
+  call.answer(stream);
+  
+  call.on('stream', function(remoteStream) {
+    renderVideo(remoteStream);
+    
+    var newConnection = {id: call.peer, remoteStream: remoteStream};
+    
+    console.log('Passing along dataConnection to clients...');
+    
+    for (var i=0; i<window.client.dataConnections.length; i++) {
+      console.log('i: ' + i + ', ' + call.peer);
+      
+      tellToMakeCall(window.client.dataConnections[i].con, call.peer);
+    }
+    
+    window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
+    setUpNewDataConnection(call.peer);
+  });
+  call.on('error', function(err) {console.log('err:', err); });
+  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+}
+
+function tellToMakeCall(dataConnection, id) {
+  console.log('telling client to call new client via dataconnection');
+  
+  dataConnection.send({id: id});
+}
+
+function setUpNewDataConnection(id) {
+  var dataConnection = peer.connect(id, {serialization: 'json'});
+  
+  console.log('Making data connection to', id);
+  
+  dataConnection.on('open', function() {
+    console.log('Data connection to', id, 'opened');
+    
+    var dataConnectionWrapper = {con: dataConnection, id: id};
+    window.client.dataConnections[window.client.dataConnections.length] = dataConnectionWrapper;
+  });
+  
+  dataConnection.on('close', function() {
+    console.log('dataConnection closed! I\'m the host');
+    // TODO: remove dataConnectionWrapper from dataConnections array
+  });
+  
+  dataConnection.on('error', function(err) { console.log('err:', err); });
+  return dataConnection;
+}
+
+function getCallAsClient(call, stream) {
+  call.answer(stream);
+  
+  call.on('stream', renderVideo);
+  call.on('error', function(err) {console.log('err:', err); });
+  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+}
+
 $(function() {
+  // assume we are the host by default until we decide to make a call
+  window.client = {isHost: true, mediaConnections:[], dataConnections:[]};
   navigator.getUserMedia({
     audio: true,
     video: true
@@ -64,30 +143,46 @@ $(function() {
     $('#user').attr({src: window.URL.createObjectURL(stream)});
     
     peer.on('call', function(call) {
-      console.log('receiving call', call);
-      call.answer(stream);
+      if (window.client.isHost) {
+        console.log('receiving call', call);
+        getCall(call, stream);
+      } else {
+        getCallAsClient(call, stream);
+      }
+    });
+    
+    peer.on('error', function(err) {
+      console.error(err);
+    });
+    
+    // only clients will ever be on the receiving end of data connections
+    peer.on('connection', function(dataConnection) {
+      console.log('recieved data connection', dataConnection);
       
-      call.on('stream', function(remoteStream) {
-        var feed = $(document.createElement('video')).attr({
-          autoplay: true,
-          src: window.URL.createObjectURL(remoteStream)
-        });
+      dataConnection.on('open', function() {
+        console.log('dataConnection opened');
+      });
+      
+      dataConnection.on('data', function(data) {
+        console.log('the host told me to call', data.id);
         
-        $('body').append(feed);
+        makeCall(data.id, stream);
+      });
+      
+      dataConnection.on('close', function() {
+        console.log('dataConnection closed! I\'m a client');
+      });
+      
+      dataConnection.on('error', function(err) {
+        console.error('dataConnection error:', err);
       });
     });
   
     $('#call-btn').on('click', function() {
-      // make a call w/ provided id
       var id = $('#call-id').val();
+      window.client.isHost = false;
       
-      console.log('calling', id);
-    
-      var call = peer.call(id, stream);
-      
-      call.on('stream', function(remoteStream) {
-        $('#caller').attr({src: window.URL.createObjectURL(remoteStream)});
-      });
+      makeCall(id, stream);
     });
   }, function(err) {
     throw err;
