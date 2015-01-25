@@ -26,6 +26,29 @@
     $('.navbar li a[href="#' + href + '"]').parent().addClass('active');
   }
   
+  function parseQueryString(str) {
+    var query = {};
+    
+    if (str) {
+      var pairs = str.split('&').map(function(part) {
+        var pair = part.split('=');
+        
+        return {
+          key: pair[0],
+          value: pair[1]
+        };
+      });
+    
+      for (var i=0; i<pairs.length; i++) {
+        var pair = pairs[i];
+        
+        query[pair.key] = pair.value;
+      }
+    }
+    
+    return query;
+  }
+  
   var routes = {
     '': {
       enter: function() {
@@ -34,10 +57,8 @@
     },
 
     'room': {
-      enter: function(roomId) {
-        renderView('view-room', 'room', {
-          hostId: roomId
-        });
+      enter: function(query) {
+        renderView('view-room', 'room', query);
       }
     }
   };
@@ -52,14 +73,17 @@
     }
 
     // parse the hash fragment
-    var newHash = newURL.split('#')[1],
+    var newHash = newURL.split('#')[1].split('?')[0],
       components = newHash.split('/'),
+      queryString = newURL.split('#')[1].split('?')[1],
       route = routes[components[0] || ''];
 
     if (route) {
       // invoke the route.enter() function with the rest of the components
       // as arguments
-      return route.enter.apply(route, components.slice(1));
+      var query = parseQueryString(queryString);
+      
+      return route.enter.apply(route, [query]);
     } else {
       // unrecognized route, abort mission
       document.location.hash = '#';
