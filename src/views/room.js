@@ -287,6 +287,8 @@ function createPeer(stream, id, options) {
         mediaConnections:[],
         dataConnections:[]
       };
+      
+      $('#chat-name').html(hostId);
 
       // get stream
       navigator.getUserMedia({
