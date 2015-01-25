@@ -1,5 +1,6 @@
 body {
 	background-image: url("background.png");
+	overflow-y: hidden;
 }
 
 h1 {
