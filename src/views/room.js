@@ -57,7 +57,10 @@ function getPeerId() {
     "I met the BasedGod", "I know Lil B", "for Lil Boss", "more relaxed",
     "better for me", "bitch mob", "4 my", "sorry Rihanna", "sorry Flocker",
     "Riff Raff", "Joey Badass", "The Game", "is irrelevant", "beef",
-    "call me", "John Stamos", "Kurt Angle", "Dr Phil"
+    "call me", "John Stamos", "Kurt Angle", "Dr Phil", "cute", "funny",
+    "random", "must collect", "very straightforward", "unreleased", "secret",
+    "NBA", "gotta make the", "1 on 1", "really fun", "WNBA", "fine ass girls",
+    "fuck in the mouth"
   ];
   
   var words = basedWords[Math.floor(Math.random() * basedWords.length)]
