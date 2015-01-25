@@ -53,15 +53,21 @@
     '': {
       enter: function() {
         renderView('view-base', '');
+      },
+      exit: function() {
+        $('view-base').trigger('exit');
       }
     },
 
     'room': {
       enter: function(query) {
         renderView('view-room', 'room', query);
+      },
+      exit: function() {
+        $('view-room').trigger('exit');
       }
     }
-  };
+  }, currentRoute = null;
 
   function handleHash(e) {
     var newURL = window.location.href;
@@ -82,6 +88,12 @@
       // invoke the route.enter() function with the rest of the components
       // as arguments
       var query = parseQueryString(queryString);
+      
+      if (currentRoute && currentRoute.exit) {
+        currentRoute.exit.apply(currentRoute);
+      }
+      
+      currentRoute = route;
       
       return route.enter.apply(route, [query]);
     } else {
