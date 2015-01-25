@@ -65,8 +65,38 @@ peer.on('open', function(id) {
   console.log('peer ID:', id);
 });
 
+function makeCall(id, stream) {
+  var mediaConnection = peer.call(id, stream);
+  
+  mediaConnection.on('stream', renderVideo);
+  mediaConnection.on('error', function(err) { console.log('err:', err); });
+  mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
+}
+
+function getCall(call, stream) {
+  call.answer(stream);
+  
+  call.on('stream', function(remoteStream) {
+    renderVideo(remoteStream);
+    var newConnection = {id: call.peer, remoteStream: remoteStream};
+    // notify every single old client that they need to makeCall to the new client
+    window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
+  }
+  call.on('error', function(err) {console.log('err:', err); });
+  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+}
+
+function getCallAsClient(call, stream) {
+  call.answer(stream);
+  
+  call.on('stream', renderVideo);
+  call.on('error', function(err) {console.log('err:', err); });
+  call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+}
+
 $(function() {
-  window.client = {isHost: true, connections:[]};
+  // assume we are the host by default until we decide to make a call
+  window.client = {isHost: true, mediaConnections:[]};
   navigator.getUserMedia({
     audio: true,
     video: true
@@ -77,71 +107,21 @@ $(function() {
     peer.on('call', function(call) {
       if (window.client.isHost) {
         console.log('receiving call', call);
-        call.answer(stream);
-
-        call.on('stream', function(remoteStream) {
-          renderVideo(remoteStream);
-          
-          var newConnection = {id: call.peer, remoteStream: remoteStream};
-          window.client.connections[window.client.connections.length] = newConnection;
-          
-          var ithConnection;
-          for (var i=0; i<window.client.connections.length; i++) {
-            var dataConnection;
-            ithConnection = window.client.connections[i];
-            dataConnection = peer.connect(ithConnection.id, {serialization: "json"});
-            dataConnection.on('open', function() {
-              console.log('connection with '+ithConnection.id+' established! Sending update data.');
-              dataConnection.send(window.client.connections);
-              console.log('sent connections update');
-            });
-            dataConnection.on('error', function(err) {
-              console.log(err);
-            });
-            dataConnection.on('close', function() {
-              console.log('closing data connection');
-            });
-          }
-        });
-        call.on('error', function(err) {
-          console.log(err);
-        });
+        getCall(call, stream);
       } else {
-        console.log('received ignored call from', call);
+        getCallAsClient(call, stream);
       }
     });
     peer.on('error', function(err) {
       console.log(err);
     });
-    
-    peer.on('connection', function(dataConnection) {
-      console.log('received connection!', dataConnection);
-      dataConnection.on('data', function(data) {
-        console.log('received data from connection.', data);
-        window.client.connections = data;
-        console.log('got the following data update:');
-        console.log(data);
-        dataConnection.close();
-      });
-      dataConnection.on('close', function() {
-        console.log('closing data connection');
-      });
-    });
   
     $('#call-btn').on('click', function() {
-      // make a call w/ provided id
-      var id = $('#call-id').val();
-      
+      var id = $('#call-id').val(); 
       window.client.isHost = false;
       
       console.log('calling', id);
-    
-      var call = peer.call(id, stream);
-      
-      call.on('stream', renderVideo);
-      call.on('error', function(err) {
-        console.log(err);
-      });
+      makeCall(id, stream);
     });
   }, function(err) {
     throw err;
