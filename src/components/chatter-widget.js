@@ -16,13 +16,17 @@
       this.name = params.name;
       this.info = params.info;
       
+     //Thanks Halpo: http://stackoverflow.com/questions/23409992/toggling-the-muted-attribute-of-html5-audio
+     
      $('.mute-button').on('click', function() {
       	if ($('.mute-button').html() == 'mute') {
-      		$('.talker').attr('muted', true);
+      		var bool = $(".talker").prop("muted");
+       		$(".talker").prop("muted",!bool);
       		$('.mute-button').html('unmute');
       	}
       	else {
-      		$('.talker').attr('muted', false);
+      		var bool = $(".talker").prop("muted");
+       		$(".talker").prop("muted",!bool);;
       		$('.mute-button').html('mute');
       	}
       });
