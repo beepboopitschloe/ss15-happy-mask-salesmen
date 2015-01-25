@@ -177,8 +177,10 @@ function getCallAsClient(call, stream) {
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
 
-function createPeer(stream) {
-  var peer = new Peer(getPeerId(), {
+function createPeer(stream, id) {
+  id = id || getPeerId();
+  
+  var peer = new Peer(id, {
     key: 'l10zoxgcc0s8m2t9'
   });
 
@@ -233,11 +235,12 @@ function createPeer(stream) {
     },
     viewModel: function(params) {
       // get host ID from params
-      var hostId = params.hostId;
+      var hostId = params.id,
+        hosting = params.hosting === 'true'? true : false;
       
       // set globals
       window.client = {
-        isHost: true,
+        isHost: hosting,
         mediaConnections:[],
         dataConnections:[]
       };
@@ -247,16 +250,17 @@ function createPeer(stream) {
         audio: true,
         video: false
       }, function(stream) {
-        var peer = createPeer(stream);
-
-        // makeCall(peer, hostId, stream);
-
-        // set up event handlers
-        $('#explicit-call-btn').on('click', function(e) {
-          var id = $('#explicit-call-id').val();
-
-          makeCall(peer, id, stream);
-        });
+        var peer;
+        
+        if (window.client.isHost) {
+          // wait for incoming connections
+          peer = createPeer(stream, hostId);
+        } else {
+          // make a connection to the host
+          peer = createPeer(stream);
+          
+          makeCall(peer, hostId, stream);
+        }
       }, function(error) {
         throw error;
       });
