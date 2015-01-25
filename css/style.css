@@ -94,7 +94,7 @@ button {
 }
 
 #chat-body {
-	height: 400px;
+	height: 350px;
 	overflow: auto;
 	padding: 5px;
 }
