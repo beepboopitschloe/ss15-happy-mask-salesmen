@@ -100,18 +100,20 @@ function getPeerId() {
   return words;
 }
 
-function makeCall(peer, id, stream) {
+function makeCall(peer, id, stream, options) {
+  options = options || {};
+  
+  var errorHandler = options.onError || function(err) {
+    console.log('error making call:', err);
+  };
+  
   console.log('calling', id);
   var mediaConnection = peer.call(id, stream, {
-    metadata: {
-      name: peer.id
-    }
+    metadata: options.metadata
   });
   
   mediaConnection.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream, {
-      name: id
-    });
+    createCallerWidget(remoteStream, options.metadata);
   });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { $('span.user-id:contains('+id+')').closest('chatter-widget').remove(); });
@@ -177,8 +179,14 @@ function getCallAsClient(call, stream) {
   call.on('close', function() { $('span.user-id:contains('+call.peer+')').closest('chatter-widget').remove(); });
 }
 
-function createPeer(stream, id) {
+function createPeer(stream, id, options) {
   id = id || getPeerId();
+  
+  options = options || {};
+  
+  var errorHandler = options.onError || function(err) {
+    console.error(err);
+  };
   
   var peer = new Peer(id, {
     key: 'l10zoxgcc0s8m2t9'
@@ -197,9 +205,7 @@ function createPeer(stream, id) {
     }
   });
   
-  peer.on('error', function(err) {
-    console.error(err);
-  });
+  peer.on('error', errorHandler);
 
   // only clients will ever be on the receiving end of data connections
   peer.on('connection', function(dataConnection) {
@@ -212,7 +218,11 @@ function createPeer(stream, id) {
     dataConnection.on('data', function(data) {
       console.log('the host told me to call', data.id);
       
-      makeCall(peer, data.id, stream);
+      makeCall(peer, data.id, stream, {
+        metadata: {
+          name: options.name
+        }
+      });
     });
     
     dataConnection.on('close', function() {
@@ -236,11 +246,13 @@ function createPeer(stream, id) {
     viewModel: function(params) {
       // get host ID from params
       var hostId = params.id,
+        displayName = params.name,
         hosting = params.hosting === 'true'? true : false;
       
       // set globals
       window.client = {
         isHost: hosting,
+        displayName: displayName,
         mediaConnections:[],
         dataConnections:[]
       };
@@ -254,12 +266,29 @@ function createPeer(stream, id) {
         
         if (window.client.isHost) {
           // wait for incoming connections
-          peer = createPeer(stream, hostId);
+          peer = createPeer(stream, hostId, {
+            name: displayName
+          });
         } else {
           // make a connection to the host
-          peer = createPeer(stream);
+          toastr.info('Connecting to ' + hostId + '...');
           
-          makeCall(peer, hostId, stream);
+          peer = createPeer(stream, null, {
+            name: displayName,
+            
+            onError: function(err) {
+              // no room to connect to
+              toastr.error('Could not find a room with id ' + hostId + '.');
+              
+              window.location.href = '#';
+            }
+          });
+          
+          makeCall(peer, hostId, stream, {
+            metadata: {
+              name: displayName
+            }
+          });
         }
       }, function(error) {
         throw error;

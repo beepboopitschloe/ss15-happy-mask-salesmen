@@ -7,6 +7,17 @@ h1 {
 	font-style: bold;
 }
 
+a {
+	color: #796189;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #4A3B54;
+	font-weight: bold;
+	text-decoration: none;
+}
+
 div {
 	padding: 30px;
 	text-align: center;
@@ -60,6 +71,7 @@ button {
 	background-color: #1A7F7F;
 	border-style: solid;
 	border-color: #1A7F7F;
+	color: white;
 }
 
 #leave  {
@@ -120,15 +132,10 @@ button {
 	border-color: #1A7F7F;
 	border-radius: 10px;
 	background-color: rgba(159, 128, 181, 0.5);
-	margin-bottom: 10px;
 }
 
 .user-id {
 	float: left;
-}
-
-.user-info {
-	float: middle;
 }
 
 .mute-button {
