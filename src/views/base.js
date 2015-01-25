@@ -11,6 +11,18 @@
       url: 'templates/views/base.html'
     },
     viewModel: function(params) {
+      $('#join-chat-id').on('keyup', function(e) {
+        if (e.which === 13) {
+          $('#join-chat-btn').click();
+        }
+      });
+      
+      $('#new-chat-id').on('keyup', function(e) {
+        if (e.which === 13) {
+          $('#new-chat-btn').click();
+        }
+      });
+      
       // set up event handlers
       $('#join-chat-btn').on('click', function(e) {
         var chatId = $('#join-chat-id').val(),
