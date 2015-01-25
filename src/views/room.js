@@ -26,6 +26,25 @@ function renderAudio(stream) {
   audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
 }
 
+function createCallerWidget(stream) {
+  var widget = document.createElement('chatter-widget');
+  
+  $(widget).attr({
+    params: JSON.stringify({
+      name: 'test name',
+      info: 'test info'
+    })
+  }).appendTo('#chat-body');
+  
+  ko.applyBindingsToNode(widget);
+  
+  // give knockout 100ms to apply the bindings and the template, since it's
+  // apparently async
+  setTimeout(function() {
+    $(widget).find('audio')[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
+  }, 1000);
+}
+
 function getPeerId() {
   var basedWords = [
     "rare", "based", "TYBG", "fuck your bitch", "fuck my bitch",
@@ -60,7 +79,8 @@ function getPeerId() {
     "call me", "John Stamos", "Kurt Angle", "Dr Phil", "cute", "funny",
     "random", "must collect", "very straightforward", "unreleased", "secret",
     "NBA", "gotta make the", "1 on 1", "really fun", "WNBA", "fine ass girls",
-    "fuck in the mouth"
+    "fuck in the mouth", "booty milk", "booty cheese", "sniff the", "girls",
+    "booty", "panties", "dirty", "feet"
   ];
   
   var words = basedWords[Math.floor(Math.random() * basedWords.length)]
@@ -74,7 +94,7 @@ function makeCall(peer, id, stream) {
   console.log('calling', id);
   var mediaConnection = peer.call(id, stream);
   
-  mediaConnection.on('stream', renderAudio);
+  mediaConnection.on('stream', createCallerWidget);
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
 }
@@ -83,7 +103,7 @@ function getCall(peer, call, stream) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
-    renderAudio(remoteStream);
+    createCallerWidget(remoteStream);
     
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
@@ -132,7 +152,7 @@ function setUpNewDataConnection(peer, id) {
 function getCallAsClient(call, stream) {
   call.answer(stream);
   
-  call.on('stream', renderAudio);
+  call.on('stream', createCallerWidget);
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
