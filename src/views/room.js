@@ -173,7 +173,6 @@ function createPeer() {
       var peer = createPeer();
 
       // get host ID from params
-      console.log(params);
       var hostId = params.hostId;
 
       // get stream
