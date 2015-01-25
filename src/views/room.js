@@ -126,43 +126,6 @@ function makeCall(peer, id, stream, options) {
   });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { $('span.user-id:contains('+id+')').closest('chatter-widget').remove(); });
-  
-  peer.on('connection', function(dataConnection) {
-    console.log('recieved data connection', dataConnection);
-    
-    dataConnection.on('open', function() {
-      console.log('dataConnection opened');
-    });
-    
-    dataConnection.on('data', function(data) {
-      if (data.type === 'newClient') {
-        console.log('the host told me to call', data.id);
-        
-        makeCall(peer, data.id, stream, {
-          metadata: {
-            name: options.name
-          }
-        });
-      } else if (data.type === 'metadata') {
-        console.log('got metadata', data);
-        
-        // @TODO update the name on the appropriate widget
-        updateWidgetWithName(dataConnection.peer, data.name);
-        
-        if (data.closeMe) {
-          dataConnection.close();
-        }
-      }
-    });
-    
-    dataConnection.on('close', function() {
-      console.log('dataConnection closed! I\'m a client');
-    });
-    
-    dataConnection.on('error', function(err) {
-      console.error('dataConnection error:', err);
-    });
-  });
 }
 
 function getCall(peer, call, stream, options) {
@@ -311,7 +274,15 @@ function createPeer(stream, id, options) {
             name: options.name
           }
         });
-      } else if (data.type === 'metadata');
+      } else if (data.type === 'metadata') {
+        console.log('i got metadata', data);
+        
+        updateWidgetWithName(dataConnection.peer, data.name);
+        
+        if (data.closeMe) {
+          dataConnection.close();
+        }
+      }
     });
     
     dataConnection.on('close', function() {
