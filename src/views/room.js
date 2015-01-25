@@ -197,7 +197,14 @@ function createPeer() {
         audio: true,
         video: false
       }, function(stream) {
-        makeCall(peer, hostId, stream);
+        // makeCall(peer, hostId, stream);
+
+        // set up event handlers
+        $('#explicit-call-btn').on('click', function(e) {
+          var id = $('#explicit-call-id').val();
+
+          makeCall(peer, id, stream);
+        });
       }, function(error) {
         throw error;
       });
