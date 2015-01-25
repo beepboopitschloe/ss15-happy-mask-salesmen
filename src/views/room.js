@@ -113,13 +113,45 @@ function makeCall(peer, id, stream, options) {
   });
   
   mediaConnection.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream, options.metadata);
+
+    peer.on('connection', function(dataConnection) {
+      console.log('recieved data connection', dataConnection);
+      
+      dataConnection.on('open', function() {
+        console.log('dataConnection opened');
+      });
+      
+      dataConnection.on('data', function(data) {
+        if (data.type === 'newClient') {
+          console.log('the host told me to call', data.id);
+          
+          makeCall(peer, data.id, stream, {
+            metadata: {
+              name: options.name
+            }
+          });
+        } else if (data.type === 'metadata') {
+          createCallerWidget(remoteStream, data);
+          if (data.closeMe) {
+            dataConnection.close();
+          }
+        }
+      });
+      
+      dataConnection.on('close', function() {
+        console.log('dataConnection closed! I\'m a client');
+      });
+      
+      dataConnection.on('error', function(err) {
+        console.error('dataConnection error:', err);
+      });
+    });
   });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { $('span.user-id:contains('+id+')').closest('chatter-widget').remove(); });
 }
 
-function getCall(peer, call, stream) {
+function getCall(peer, call, stream, options) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
@@ -136,7 +168,7 @@ function getCall(peer, call, stream) {
     }
     
     window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
-    setUpNewDataConnection(peer, call.peer);
+    setUpNewDataConnection(peer, call.peer, options);
   });
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { $('span.user-id:contains('+call.peer+')').closest('chatter-widget').remove(); });
@@ -144,17 +176,20 @@ function getCall(peer, call, stream) {
 
 function tellToMakeCall(dataConnection, id) {
   console.log('telling client to call new client via dataconnection');
-  
-  dataConnection.send({id: id});
+
+  dataConnection.send({id: id, type: 'newClient'});
 }
 
-function setUpNewDataConnection(peer, id) {
+function setUpNewDataConnection(peer, id, options) {
   var dataConnection = peer.connect(id, {serialization: 'json'});
   
   console.log('Making data connection to', id);
   
   dataConnection.on('open', function() {
     console.log('Data connection to', id, 'opened');
+
+    // send host's chatter widget metadata to client
+    sendMetadata(dataConnection, options)
     
     var dataConnectionWrapper = {con: dataConnection, id: id};
     window.client.dataConnections[window.client.dataConnections.length] = dataConnectionWrapper;
@@ -169,8 +204,46 @@ function setUpNewDataConnection(peer, id) {
   return dataConnection;
 }
 
-function getCallAsClient(call, stream) {
+function setUpClientToClientDataConnection(peer, call.peer, options) {
+  var dataConnection = peer.connect(id, {serialization: 'json'});
+  
+  console.log('Making data connection to', id);
+  
+  dataConnection.on('open', function() {
+    console.log('Data connection to', id, 'opened');
+
+    // send host's chatter widget metadata to client
+    sendMetadataFromClient(dataConnection, options)
+    
+    var dataConnectionWrapper = {con: dataConnection, id: id};
+
+  });
+  
+  dataConnection.on('close', function() {
+    console.log('dataConnection closed! I\'m the host');
+    // TODO: remove dataConnectionWrapper from dataConnections array
+  });
+  
+  dataConnection.on('error', function(err) { console.log('err:', err); });
+  return dataConnection;
+}
+
+function sendMetadata(dataConnection, metadata) {
+  metadata.type = 'metadata';
+  metadata.closeMe = false;
+  dataConnection.send(metadata);
+}
+
+function sendMetadataFromClient(dataConnection, metadata) {
+  metadata.type = 'metadata';
+  metadata.closeMe = true;
+  dataConnection.send(metadata);
+}
+
+function getCallAsClient(peer, call, stream, options) {
   call.answer(stream);
+
+  setUpClientToClientDataConnection(peer, call.peer, options);
   
   call.on('stream', function(remoteStream) {
     createCallerWidget(remoteStream, call.metadata);
@@ -199,9 +272,9 @@ function createPeer(stream, id, options) {
   peer.on('call', function(call) {
     if (window.client.isHost) {
       console.log('receiving call', call);
-      getCall(peer, call, stream);
+      getCall(peer, call, stream, options);
     } else {
-      getCallAsClient(call, stream);
+      getCallAsClient(peer, call, stream, options);
     }
   });
   
@@ -216,13 +289,15 @@ function createPeer(stream, id, options) {
     });
     
     dataConnection.on('data', function(data) {
-      console.log('the host told me to call', data.id);
-      
-      makeCall(peer, data.id, stream, {
-        metadata: {
-          name: options.name
-        }
-      });
+      if (data.type === 'newClient') {
+        console.log('the host told me to call', data.id);
+        
+        makeCall(peer, data.id, stream, {
+          metadata: {
+            name: options.name
+          }
+        });
+      } else if (data.type === 'metadata');
     });
     
     dataConnection.on('close', function() {
