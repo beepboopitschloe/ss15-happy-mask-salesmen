@@ -29,8 +29,12 @@
           displayName = $('#user-name').val()
             || 'anonymous';
         
-        window.location.href = '#room?id=' + chatId
-          + '&name=' + displayName;
+        if (chatId.length < 3) {
+          toastr.error('Please use a chat name that is at least 3 characters.');
+        } else {
+          window.location.href = '#room?id=' + chatId
+            + '&name=' + displayName;
+        }
       });
       
       $('#new-chat-btn').on('click', function(e) {
@@ -38,9 +42,13 @@
           displayName = $('#user-name').val()
             || 'anonymous';
         
-        window.location.href = '#room?id=' + chatId
-          + '&hosting=true'
-          + '&name=' + displayName;
+        if (chatId.length < 3) {
+          toastr.error('Please use a chat name that is at least 3 characters.');
+        } else {
+          window.location.href = '#room?id=' + chatId
+            + '&hosting=true'
+            + '&name=' + displayName;
+        }
       });
     }
   });
