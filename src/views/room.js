@@ -109,15 +109,11 @@ function makeCall(peer, id, stream, options) {
   
   console.log('calling', id);
   var mediaConnection = peer.call(id, stream, {
-    metadata: {
-      name: peer.id
-    }
+    metadata: options.metadata
   });
   
   mediaConnection.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream, {
-      name: id
-    });
+    createCallerWidget(remoteStream, options.metadata);
   });
   mediaConnection.on('error', errorHandler);
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
@@ -222,7 +218,11 @@ function createPeer(stream, id, options) {
     dataConnection.on('data', function(data) {
       console.log('the host told me to call', data.id);
       
-      makeCall(peer, data.id, stream);
+      makeCall(peer, data.id, stream, {
+        metadata: {
+          name: options.name
+        }
+      });
     });
     
     dataConnection.on('close', function() {
@@ -246,11 +246,13 @@ function createPeer(stream, id, options) {
     viewModel: function(params) {
       // get host ID from params
       var hostId = params.id,
+        displayName = params.name,
         hosting = params.hosting === 'true'? true : false;
       
       // set globals
       window.client = {
         isHost: hosting,
+        displayName: displayName,
         mediaConnections:[],
         dataConnections:[]
       };
@@ -264,19 +266,29 @@ function createPeer(stream, id, options) {
         
         if (window.client.isHost) {
           // wait for incoming connections
-          peer = createPeer(stream, hostId);
+          peer = createPeer(stream, hostId, {
+            name: displayName
+          });
         } else {
           // make a connection to the host
+          toastr.info('Connecting to ' + hostId + '...');
+          
           peer = createPeer(stream, null, {
+            name: displayName,
+            
             onError: function(err) {
               // no room to connect to
-              toastr.error('Could not find a room with id ' + hostId);
+              toastr.error('Could not find a room with id ' + hostId + '.');
               
               window.location.href = '#';
             }
           });
           
-          makeCall(peer, hostId, stream);
+          makeCall(peer, hostId, stream, {
+            metadata: {
+              name: displayName
+            }
+          });
         }
       }, function(error) {
         throw error;
