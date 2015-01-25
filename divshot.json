@@ -1,0 +1,11 @@
+{
+  "name": "ss15-happy-mask-salesmen",
+  "root": "./",
+  "clean_urls": true,
+  "error_page": "error.html",
+  "exclude": [
+    "./package.json",
+    "./Gruntfile.js",
+    "./node_modules"
+  ]
+}
