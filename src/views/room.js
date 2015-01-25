@@ -29,6 +29,8 @@ function renderAudio(stream) {
 function createCallerWidget(stream, metadata) {
   var widget = document.createElement('chatter-widget');
   
+  metadata = metadata || {};
+  
   $(widget).attr({
     params: JSON.stringify({
       name: metadata.name || 'anonymous',
