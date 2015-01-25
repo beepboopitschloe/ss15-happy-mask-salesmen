@@ -10,7 +10,9 @@ Authors
 -------
 
 [Noah Muth](http://github.com/nmuth)
+
 [Rob Sigler](http://github.com/flossoraptor)
+
 [Jane Kagan](http://github.com/janekagan)
 
 Tools Used
