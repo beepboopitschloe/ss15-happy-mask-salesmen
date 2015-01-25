@@ -132,7 +132,7 @@ function getCallAsClient(call, stream) {
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
 
-function createPeer() {
+function createPeer(stream) {
   var peer = new Peer(getPeerId(), {
     key: 'l10zoxgcc0s8m2t9'
   });
@@ -187,8 +187,6 @@ function createPeer() {
       url: 'templates/views/room.html'
     },
     viewModel: function(params) {
-      var peer = createPeer();
-
       // get host ID from params
       var hostId = params.hostId;
       
@@ -204,6 +202,8 @@ function createPeer() {
         audio: true,
         video: false
       }, function(stream) {
+        var peer = createPeer(stream);
+
         // makeCall(peer, hostId, stream);
 
         // set up event handlers
