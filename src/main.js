@@ -42,6 +42,8 @@ function getPeerId() {
 }
 
 function streamAudio(stream) {
+  console.log('Streaming audio.');
+  
   var context = new AudioContext(),
     mic = context.createMediaStreamSource(stream),
     filter = context.createBiquadFilter();
@@ -94,8 +96,7 @@ $(function() {
   navigator.getUserMedia({
     audio: true
   }, function(stream) {
-    // show preview of user
-    // $('#user').attr({src: window.URL.createObjectURL(stream)});
+    streamAudio(stream);
     
     peer.on('call', function(call) {
       if (window.client.isHost) {
