@@ -11,6 +11,16 @@
       url: 'templates/views/base.html'
     },
     viewModel: function(params) {
+      // buttons to reveal the join/create forms
+      $('button#show-join-form').on('click', function() {
+        $('div#join-form').addClass('active');
+        $('div#create-form').removeClass('active');
+      });
+      $('button#show-create-form').on('click', function() {
+        $('div#create-form').addClass('active');
+        $('div#join-form').removeClass('active');
+      });
+      
       $('#join-chat-id').on('keyup', function(e) {
         if (e.which === 13) {
           $('#join-chat-btn').click();
