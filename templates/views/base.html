@@ -1,9 +1,20 @@
-	<div id="enter-name-box">
-		<label id="name-label">enter your name: </label>
-		<input type="text" id="user-name" />
-	</div>
-	<div id="chat-buttons-container">
-		<div id="join-chat">
+<div id="enter-name-box">
+	<label id="name-label">enter your name: </label>
+	<input type="text" id="user-name" />
+</div>
+
+<div id="buttons-container">
+  <button id="show-join-form" class="btn-lg">
+    Join A Chat
+  </button>
+  <button id="show-create-form" class="btn-lg">
+    Create A Chat
+  </button>
+</div>
+
+<div class="forms-container">
+	<div id="join-form" class="chatroom-form-container">
+		<div id="join-chat" class="chatroom-form">
 			<span>join a chat</span>
 			<br/><br/>
 			<input type="text" id="join-chat-id" placeholder="Name of the room to join" />
@@ -13,7 +24,10 @@
 			  </span>
 			</button>
 		</div>
-		<div id="new-chat">
+	</div>
+	
+	<div id="create-form" class="chatroom-form-container">
+	  <div id="new-chat" class="chatroom-form">
 			<span>create a chat</span>
 			<br/><br/>
 			<input type="text" id="new-chat-id" placeholder="Name of the room to create" />
@@ -24,3 +38,4 @@
 			</button>
 		</div>
 	</div>
+</div>

@@ -5,12 +5,12 @@ body {
 }
 
 a {
-	color: #796189;
+	color: #165E5E;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #4A3B54;
+	color: #115151;
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -28,36 +28,12 @@ input {
 }
 
 input:focus {
-  box-shadow: 0px 0px 10px #1A7F7F;
+  box-shadow: 0px 0px 10px #796189;
 }
 
 #user-name {
 	width: 500px;
 	font-size: 2em;
-}
-
-#join-chat {
-	float: left;
-	border-style: solid;
-	border-width: 5px;
-	border-color: #1A7F7F;
-	border-radius: 10px;
-	background-color: rgba(155,203,204,0.6);
-	height: 200px;
-	width: 45%;
-	display: inline;
-}
-
-#new-chat {
-	float: right;
-	border-style: solid;
-	border-width: 5px;
-	border-color: #1A7F7F;
-	border-radius: 10px;
-	background-color: rgba(155,203,204,0.6);
-	height: 200px;
-	width: 45%;
-	display: inline;
 }
 
 #chat-buttons-container {
@@ -112,10 +88,10 @@ button:hover {
 
 #chat-header, #chat-body {
 	border-style: solid;
-	border-width: 5px;
+	border-width: 2px;
 	border-color: #1A7F7F;
 	border-radius: 10px;
-	background-color: rgba(155,203,204,0.6);
+	background-color: rgba(121,97,137,0.2);
 	width: 50%;
 	margin: 0 auto;
 	text-align: center;
@@ -152,10 +128,11 @@ button:hover {
 
 .user {
 	border-style: solid;
-	border-width: 5px;
+	border-width: 2px;
 	border-color: #1A7F7F;
 	border-radius: 10px;
-	background-color: rgba(159, 128, 181, 0.5);
+	width: 100%;
+	background-color: rgba(26, 127, 127, 0.2);
 	margin-bottom: 10px;
 	height: 100px;
 }
@@ -179,6 +156,35 @@ button:hover {
 #header-div {
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+
+/* join and create forms */
+div.chatroom-form-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+	
+  transform: translateY(1000px);
+  
+  transition: all 0.2s;
+}
+
+div.chatroom-form-container.active {
+  transform: translateY(0);
+}
+
+div.chatroom-form {
+  display: inline-block;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #1A7F7F;
+	border-radius: 10px;
+	background-color: rgba(121,97,137,0.2);
+	height: 200px;
+	width: 45%;
 }
 
 /* loader element from http://projects.lukehaas.me/css-loaders/ */
