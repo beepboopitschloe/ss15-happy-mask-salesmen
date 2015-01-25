@@ -175,6 +175,15 @@ button:hover {
 	padding-bottom: 5px;
 }
 
+div#footer {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	padding: 10px;
+	text-align: center;
+	font-size: 0.75em;
+}
+
 /* loader element from http://projects.lukehaas.me/css-loaders/ */
 .loader {
   font-size: 90px;
