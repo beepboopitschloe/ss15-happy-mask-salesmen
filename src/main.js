@@ -82,7 +82,7 @@ function getCall(call, stream) {
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
     for (var i=0; i<window.client.dataConnections.length; i++) {
-      console.log('i: ' i + ', ' + call.peer);
+      console.log('i: ' + i + ', ' + call.peer);
       tellToMakeCall(window.client.DataConnections[i], id);
     }
     
