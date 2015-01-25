@@ -45,6 +45,12 @@ function createCallerWidget(stream, metadata) {
   setTimeout(function() {
     $(widget).find('audio')[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
   }, 1000);
+  
+  // alter the chat body message, if there is one
+  $('#chat-body-message').text('Connected to:');
+  
+  // remove the spinner if it exists
+  $('.loader').remove();
 }
 
 function getPeerId() {
@@ -269,10 +275,18 @@ function createPeer(stream, id, options) {
           peer = createPeer(stream, hostId, {
             name: displayName
           });
+          
+          // display a message in the chat box
+          $('#chat-body').append('<span id="chat-body-message">Waiting for connections...</span>');
+          
+          $(document.createElement('div'))
+          .addClass('loader')
+          .css({
+            top: '50px'
+          })
+          .appendTo('#chat-body');
         } else {
           // make a connection to the host
-          toastr.info('Connecting to ' + hostId + '...');
-          
           peer = createPeer(stream, null, {
             name: displayName,
             
@@ -289,6 +303,16 @@ function createPeer(stream, id, options) {
               name: displayName
             }
           });
+          
+          // display a message while we're waiting to connect
+          $('#chat-body').append('<span id="chat-body-message">Connecting to host...</span>');
+          
+          $(document.createElement('div'))
+          .addClass('loader')
+          .css({
+            top: '50px'
+          })
+          .appendTo('#chat-body');
         }
       }, function(error) {
         throw error;
