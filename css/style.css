@@ -1,18 +1,6 @@
-.greyscale {
-  +filter: greyscale(1);
-}
-
-.sepia {
-  +filter: sepia(1);
-}
-
-.blur {
-  +filter: blur(3px);
-}  
-
 body {
 	background-image: url("background.png");
-} 
+}
 
 h1 {
 	text-align: center;
@@ -132,6 +120,7 @@ button {
 	border-color: #1A7F7F;
 	border-radius: 10px;
 	background-color: rgba(159, 128, 181, 0.5);
+	margin-bottom: 10px;
 }
 
 .user-id {
@@ -146,6 +135,6 @@ button {
 	float: right;
 }
 
-#view-container{ 
+#view-container{
 	padding: 0px;
 }
