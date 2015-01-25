@@ -193,6 +193,13 @@ function createPeer() {
 
       // get host ID from params
       var hostId = params.hostId;
+      
+      // set globals
+      window.client = {
+        isHost: true,
+        mediaConnections:[],
+        dataConnections:[]
+      };
 
       // get stream
       navigator.getUserMedia({
