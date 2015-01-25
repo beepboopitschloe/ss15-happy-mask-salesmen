@@ -41,20 +41,13 @@ function getPeerId() {
   return words;
 }
 
-function audioAPI() {
-  var context = new AudioContext();
-
-  navigator.getUserMedia({
-    audio: true
-  }, function(stream) {
-    var mic = context.createMediaStreamSource(stream),
-      filter = context.createBiquadFilter();
-    
-    mic.connect(filter);
-    filter.connect(context.destination);
-  }, function() {
-    console.log('err', arguments);
-  });
+function streamAudio(stream) {
+  var context = new AudioContext(),
+    mic = context.createMediaStreamSource(stream),
+    filter = context.createBiquadFilter();
+  
+  mic.connect(filter);
+  filter.connect(context.destination);
 }
 
 var peer = new Peer(getPeerId(), {
@@ -68,7 +61,7 @@ peer.on('open', function(id) {
 function makeCall(id, stream) {
   var mediaConnection = peer.call(id, stream);
   
-  mediaConnection.on('stream', renderVideo);
+  mediaConnection.on('stream', streamAudio);
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
 }
@@ -77,7 +70,8 @@ function getCall(call, stream) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
-    renderVideo(remoteStream);
+    streamAudio(remoteStream);
+    
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     // notify every single old client that they need to makeCall to the new client
     window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
@@ -89,7 +83,7 @@ function getCall(call, stream) {
 function getCallAsClient(call, stream) {
   call.answer(stream);
   
-  call.on('stream', renderVideo);
+  call.on('stream', streamAudio);
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
@@ -98,11 +92,10 @@ $(function() {
   // assume we are the host by default until we decide to make a call
   window.client = {isHost: true, mediaConnections:[]};
   navigator.getUserMedia({
-    audio: true,
-    video: true
+    audio: true
   }, function(stream) {
     // show preview of user
-    $('#user').attr({src: window.URL.createObjectURL(stream)});
+    // $('#user').attr({src: window.URL.createObjectURL(stream)});
     
     peer.on('call', function(call) {
       if (window.client.isHost) {
@@ -117,7 +110,7 @@ $(function() {
     });
   
     $('#call-btn').on('click', function() {
-      var id = $('#call-id').val(); 
+      var id = $('#call-id').val();
       window.client.isHost = false;
       
       console.log('calling', id);
