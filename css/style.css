@@ -19,6 +19,10 @@ div {
 	text-align: center;
 }
 
+input[type="text"] {
+  padding: 4px;
+}
+
 #user-name {
 	width: 500px;
 	font-size: 2em;
