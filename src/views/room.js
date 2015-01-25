@@ -26,13 +26,13 @@ function renderAudio(stream) {
   audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
 }
 
-function createCallerWidget(stream) {
+function createCallerWidget(stream, metadata) {
   var widget = document.createElement('chatter-widget');
   
   $(widget).attr({
     params: JSON.stringify({
-      name: 'test name',
-      info: 'test info'
+      name: metadata.name || 'anonymous',
+      info: metadata.info || ''
     })
   }).appendTo('#chat-body');
   
@@ -92,7 +92,11 @@ function getPeerId() {
 
 function makeCall(peer, id, stream) {
   console.log('calling', id);
-  var mediaConnection = peer.call(id, stream);
+  var mediaConnection = peer.call(id, stream, {
+    metadata: {
+      name: peer.id
+    }
+  });
   
   mediaConnection.on('stream', createCallerWidget);
   mediaConnection.on('error', function(err) { console.log('err:', err); });
@@ -103,7 +107,7 @@ function getCall(peer, call, stream) {
   call.answer(stream);
   
   call.on('stream', function(remoteStream) {
-    createCallerWidget(remoteStream);
+    createCallerWidget(remoteStream, call.metadata);
     
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
@@ -152,7 +156,9 @@ function setUpNewDataConnection(peer, id) {
 function getCallAsClient(call, stream) {
   call.answer(stream);
   
-  call.on('stream', createCallerWidget);
+  call.on('stream', function(remoteStream) {
+    createCallerWidget(remoteStream, call.metadata);
+  });
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
