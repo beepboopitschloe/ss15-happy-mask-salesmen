@@ -22,6 +22,7 @@ div {
 
 input[type="text"] {
   padding: 4px;
+  width: 200px;
 }
 
 #user-name {
@@ -37,6 +38,7 @@ input[type="text"] {
 	border-radius: 10px;
 	background-color: rgba(155,203,204,0.6);
 	height: 200px;
+	width: 45%;
 	display: inline;
 }
 
@@ -48,6 +50,7 @@ input[type="text"] {
 	border-radius: 10px;
 	background-color: rgba(155,203,204,0.6);
 	height: 200px;
+	width: 45%;
 	display: inline;
 }
 
