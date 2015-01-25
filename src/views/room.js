@@ -347,7 +347,8 @@ function createPeer(stream, id, options) {
           peer.destroy();
         });
       }, function(error) {
-        throw error;
+        console.error(error);
+        toastr.error('Please enable your microphone for use with Speakeasy.');
       });
     }
   });
