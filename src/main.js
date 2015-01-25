@@ -81,7 +81,7 @@ function getCall(call, stream) {
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     // notify every single old client that they need to makeCall to the new client
     window.client.mediaConnections[window.client.mediaConnections.length] = newConnection;
-  }
+  });
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
 }
