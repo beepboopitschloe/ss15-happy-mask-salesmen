@@ -15,19 +15,21 @@
       
       this.name = params.name;
       this.info = params.info;
+      this.peerId = params.peerId;
       
      //Thanks Halpo: http://stackoverflow.com/questions/23409992/toggling-the-muted-attribute-of-html5-audio
+     var widget = $('#' + this.peerId + '-widget');
      
-     $('.mute-button').on('click', function() {
-      	if ($('.mute-button').html() == 'mute') {
-      		var bool = $(".talker").prop("muted");
-       		$(".talker").prop("muted",!bool);
-      		$('.mute-button').html('unmute');
-      	}
-      	else {
-      		var bool = $(".talker").prop("muted");
-       		$(".talker").prop("muted",!bool);;
-      		$('.mute-button').html('mute');
+     widget.find('.mute-button').on('click', function() {
+        var talker = widget.find('.talker'),
+          self = $(this);
+        
+        talker.prop('muted', !talker.prop('muted'));
+       
+        if (self.html() == 'mute') {
+      		self.html('unmute');
+      	} else {
+      		self.html('mute');
       	}
       });
     }

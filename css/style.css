@@ -133,6 +133,7 @@ button {
 	border-color: #1A7F7F;
 	border-radius: 10px;
 	background-color: rgba(159, 128, 181, 0.5);
+	margin-bottom: 10px;
 }
 
 .user-id {

@@ -36,7 +36,8 @@ function createCallerWidget(peerId, stream, metadata) {
     id: peerId + '-widget',
     params: JSON.stringify({
       name: metadata.name || 'anonymous',
-      info: metadata.info || ''
+      info: metadata.info || '',
+      peerId: peerId
     })
   }).appendTo('#chat-body');
   
