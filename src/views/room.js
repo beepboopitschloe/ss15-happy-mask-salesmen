@@ -100,7 +100,11 @@ function makeCall(peer, id, stream) {
     }
   });
   
-  mediaConnection.on('stream', createCallerWidget);
+  mediaConnection.on('stream', function(remoteStream) {
+    createCallerWidget(remoteStream, {
+      name: id
+    });
+  });
   mediaConnection.on('error', function(err) { console.log('err:', err); });
   mediaConnection.on('close', function() { console.log('mediaConnection closed; I\'m the client making a call'); });
 }
