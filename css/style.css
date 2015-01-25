@@ -157,6 +157,7 @@ button:hover {
 	border-radius: 10px;
 	background-color: rgba(159, 128, 181, 0.5);
 	margin-bottom: 10px;
+	height: 100px;
 }
 
 .user-id {
