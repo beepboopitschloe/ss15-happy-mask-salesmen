@@ -204,7 +204,7 @@ function setUpNewDataConnection(peer, id, options) {
   return dataConnection;
 }
 
-function setUpClientToClientDataConnection(peer, call.peer, options) {
+function setUpClientToClientDataConnection(peer, id, options) {
   var dataConnection = peer.connect(id, {serialization: 'json'});
   
   console.log('Making data connection to', id);
