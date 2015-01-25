@@ -92,9 +92,9 @@ function getCall(call, stream) {
 }
 
 function setUpNewDataConnection(id) {
-  var dataConnection = peer.connect(call.peer, {serialization: 'json'});
-  var dataConnectionWrapper = {con: dataConnection, id: id};
+  var dataConnection = peer.connect(id, {serialization: 'json'});
   dataConnection.on('open', function() {
+    var dataConnectionWrapper = {con: dataConnection, id: id};
     window.client.dataConnections[window.client.dataConnections] = dataConnectionWrapper;
   });
   dataConnection.on('close', function() {
