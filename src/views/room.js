@@ -6,9 +6,9 @@
 
 (function() {
 
-  ko.components.register('view-join', {
+  ko.components.register('view-room', {
     template: {
-      url: 'templates/views/join.html'
+      url: 'templates/views/room.html'
     },
     viewModel: function(params) {
       

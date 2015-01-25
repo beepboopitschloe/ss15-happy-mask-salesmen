@@ -28,9 +28,9 @@
       }
     },
 
-    'join': {
+    'room': {
       enter: function(roomId) {
-        renderView('view-join', 'join');
+        renderView('view-room', 'room');
       }
     }
   };
