@@ -82,16 +82,66 @@ button {
 	float: left;
 }
 
-#chat-header {
+#chat-container {
+	display: block;
+}
+
+#chat-header, #chat-body {
 	border-style: solid;
 	border-width: 5px;
 	border-color: #1A7F7F;
 	border-radius: 10px;
 	background-color: rgba(155,203,204,0.6);
+	width: 50%;
+	margin: 0 auto;
+	text-align: center;
 }
 
-#chat-container {
-	display: block;
-	width: 60%;
-	margin: 0 auto;
+#chat-body {
+	height: 400px;
+	overflow: auto;
+	padding: 5px;
+}
+
+#chat-header {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	display: table;
+}
+
+::-webkit-scrollbar {
+    background: #79b9bb;
+	width: 20px;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #1A7F7F;
+	border-radius: 10px;
+	border: 3px solid;
+	border-color: #79b9bb;
+}
+
+#space {
+	margin: 10px;
+}
+
+.user {
+	border-style: solid;
+	border-width: 5px;
+	border-color: #1A7F7F;
+	border-radius: 10px;
+	background-color: rgba(159, 128, 181, 0.5);
+}
+
+.user-id {
+	float: left;
+}
+
+.user-info {
+	float: middle;
+}
+
+.mute-button {
+	float: right;
 }
