@@ -22,8 +22,6 @@
 
       var url = config.url;
 
-      console.log('loading template from url', name, url);
-
       $.get(url)
       .success(function(html) {
         // need to transform html into DOM nodes
@@ -44,7 +42,5 @@
 
   // add it to the front of the loaders array so that it will fire first
   ko.components.loaders.unshift(loader);
-
-  console.log(ko.components.loaders);
 
 })();
