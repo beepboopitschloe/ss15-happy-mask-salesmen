@@ -10,7 +10,14 @@
     "type": "git",
     "url": "https://github.com/staticshowdown/ss15-happy-mask-salesmen.git"
   },
-  "author": "Noah Muth <noahmuth@gmail.com> (http://github.com/nmuth)",
+  "contributors": [{
+    "name": "Noah Muth",
+    "email": "noahmuth@gmail.com"
+  },{
+    "name": "Robert Sigler"
+  },{
+    "name": "Jane Kagan"
+  }],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/staticshowdown/ss15-happy-mask-salesmen/issues"
