@@ -15,6 +15,17 @@
       
       this.name = params.name;
       this.info = params.info;
+      
+     $('.mute-button').on('click', function() {
+      	if ($('.mute-button').html() == 'mute') {
+      		$('.talker').attr('muted', true);
+      		$('.mute-button').html('unmute');
+      	}
+      	else {
+      		$('.talker').attr('muted', false);
+      		$('.mute-button').html('mute');
+      	}
+      });
     }
   })
 
