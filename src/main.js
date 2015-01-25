@@ -66,6 +66,7 @@ peer.on('open', function(id) {
 });
 
 function makeCall(id, stream) {
+  console.log('calling', id);
   var mediaConnection = peer.call(id, stream);
   
   mediaConnection.on('stream', renderVideo);
@@ -81,6 +82,7 @@ function getCall(call, stream) {
     var newConnection = {id: call.peer, remoteStream: remoteStream};
     
     for (var i=0; i<window.client.dataConnections.length; i++) {
+      console.log('i: ' i + ', ' + call.peer);
       tellToMakeCall(window.client.DataConnections[i], id);
     }
     
@@ -89,6 +91,11 @@ function getCall(call, stream) {
   });
   call.on('error', function(err) {console.log('err:', err); });
   call.on('close', function() { console.log('mediaConnection closed; I\'m the host'); });
+}
+
+function tellToMakeCall(dataConnection, id) {
+  console.log('telling client to call new client via dataconnection');
+  dataConnection.send({id: id});
 }
 
 function setUpNewDataConnection(id) {
@@ -141,6 +148,7 @@ $(function() {
         // ??? idk
       });
       dataConnection.on('data', function(data) {
+        console.log('the host told me to call', data.id);
         makeCall(data.id, stream);
       });
       dataConnection.on('close', function() {
@@ -153,7 +161,6 @@ $(function() {
       var id = $('#call-id').val(); 
       window.client.isHost = false;
       
-      console.log('calling', id);
       makeCall(id, stream);
     });
   }, function(err) {
