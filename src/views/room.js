@@ -55,7 +55,9 @@ function getPeerId() {
     "ski ski", "ski mask thug", "ski mask thuggin", "twerk sum",
     "stop pausing my damn beat", "don't pause the beat", "i know youre a freak",
     "I met the BasedGod", "I know Lil B", "for Lil Boss", "more relaxed",
-    "better for me"
+    "better for me", "bitch mob", "4 my", "sorry Rihanna", "sorry Flocker",
+    "Riff Raff", "Joey Badass", "The Game", "is irrelevant", "beef",
+    "call me", "John Stamos", "Kurt Angle", "Dr Phil"
   ];
   
   var words = basedWords[Math.floor(Math.random() * basedWords.length)]
