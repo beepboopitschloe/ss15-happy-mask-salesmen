@@ -82,7 +82,15 @@ function getPeerId() {
     "random", "must collect", "very straightforward", "unreleased", "secret",
     "NBA", "gotta make the", "1 on 1", "really fun", "WNBA", "fine ass girls",
     "fuck in the mouth", "booty milk", "booty cheese", "sniff the", "girls",
-    "booty", "panties", "dirty", "feet"
+    "booty", "panties", "dirty", "feet", "2 rich to pimp", "rent due",
+    "NYU lecture", "MIT lecture", "rick ross", "dont go outside", "death of rap",
+    "I cook", "birth of rap", "giving up", "februarys confessions", "dopeman hunter",
+    "connected in jail", "illusions of grandeur", "Charlie Sheen", "ps2 game collection",
+    "dbz budokai", "whodie", "Andy Milonakis", "Keith Sweat", "cash on deck", "stick",
+    "hit da 4l0", "Miley Cyrus", "I got mo", "Im god", "Jerry Rice", "glassface",
+    "flowers exodus", "dior paint", "the age of information", "california boy",
+    "a zilli", "Caillou", "Bill Bellamy", "Hugh Hefner", "Obama BasedGod",
+    "pretty", "rich", "young", "thug", "robbin and shoppin"
   ];
   
   var words = basedWords[Math.floor(Math.random() * basedWords.length)]
